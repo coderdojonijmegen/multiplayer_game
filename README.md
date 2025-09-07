@@ -1,6 +1,9 @@
 # Multiplayer 2D single-screen game
 Een coöperatief spel waarbij je niet zelf de speler bent, maar een drone leert het spel te spelen.
 
+**Doel**
+We zetten een server op die de communicatie tussen alle clients regelt. Die draait op een centrale computer. Daar draait ook het spel op en die kan het gezamenlijke speelveld op een grote televisie of beamer laten zien. De kinderen programmeren de client die verbinding maakt met de server. Wij maken instructies die ze kunnen volgen, maar ze hebben veel vrijheid om hun drone aan te passen, zowel qua uiterlijk als functionaliteit. Hoe slimmer zij hun drone maken, hoe beter hun drone het spel speelt en hoe meer succesvol hun team is.
+
 **Gameplay**
 
 Er zijn twee teams, rood en groen. Elk team heeft een bibliotheek waar drones boeken kunnen ophalen en een plek waar een toren gebouwd moet worden met de boeken.
