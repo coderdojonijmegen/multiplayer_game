@@ -1,0 +1,23 @@
+{
+  "name": "Haskell Server Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "haskell.haskell",
+        "justus-w.haskell-ghci-dap",
+        "sanaajani.hie-vscode",
+        "mrmoore.vscode-integrated-haskell-shell"
+      ]
+    }
+  },
+  "forwardPorts": [5000],
+  "portsAttributes": {
+    "5000": {
+      "label": "Haskell Server"
+    }
+  },
+  "remoteUser": "vscode"
+}
