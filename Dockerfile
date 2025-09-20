@@ -20,8 +20,10 @@ ENV PATH="/home/$USERNAME/.cabal/bin:/home/$USERNAME/.local/bin:$PATH"
 
 FROM dev as ci
 
-COPY --chown=vscode:vscode src/ .
-RUN ghc hello.hs
+COPY --chown=vscode:vscode . .
+RUN cabal update
+RUN cabal build
+RUN cp $(cabal list-bin multiplayer-game) /workspaces/haskell-server-app
 
 
 FROM haskell:slim as prod
@@ -35,6 +37,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 USER $USERNAME
 
 WORKDIR /app
-COPY --from=ci /workspaces/haskell-server-app/hello /app/hello
-CMD ["./hello"]
+COPY --from=ci /workspaces/haskell-server-app/multiplayer-game /app/multiplayer-game
+CMD ["./multiplayer-game"]
 
