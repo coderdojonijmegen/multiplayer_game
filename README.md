@@ -49,7 +49,23 @@ Als je drone de bodem raakt, dan verschijnt hij na een paar seconden opnieuw aan
 	- [ ] Server slaat steeds de input van de clients op (posities en andere eigenschappen van de drones)
 - [ ] Code schrijven voor communicatie tussen client en server (en de handleiding voor de client maken). [Network Zero](https://networkzero.readthedocs.io/en/latest/index.html) is specifiek gemaakt voor een educatieve setting, dus als we Pygame Zero gebruiken voor de client (zie hieronder) dan ligt Network Zero voor de hand. Evt. MQTT gebruiken?
 - [ ] Multiplayer game maken op basis van input van clients. Zie gameplay hierboven. (Dit is dus niet iets dat de kinderen maken. We maken deze game zodat de clients die de kinderen maken aan deze game mee kunnen doen.)
-	- [ ] Game full-screen laten zien (vooraan op een groot scherm/projector). We zouden ook kunnen kijken of dit scherm een webpagina zou kunnen zijn die de deelnemers ook op hun eigen computer kunnen openen zodat ze daar de voortgang van het spel kunnen volgen, dat is waarschijnlijk wel zo praktisch. 
+	- [ ] Het spel is single-screen en 2D.
+	- [ ] Als spelers disconnecten verdwijnt hun drone.
+	- [ ] Als een nieuwe speler inlogt en het aantal drones is niet gelijk voor beide teams, laat de game dan even later een computer-drone toevoegen voor het andere team (om het eerlijk te houden). Die drone vliegt weg als een nieuwe drone zich meldt voor dat team óf als het eerste team een speler kwijtraakt.
+	- [ ] Geef alle drones dezelfde snelheid; spelers kunnen de drones alleen een richting geven of laten stilstaan.
+	- [ ] Als een drone verder daalt dan de grond dan is dat een crash.
+ 	- [ ] Als één team het doel bereikt heeft dan stopt het spel (en krijgen we een *win screen* te zien, zie hieronder bij de GUI).
+  	- [ ] Publiceer een count-down counter om te laten weten wanneer we opnieuw beginnen (voor de GUI).
+	- [ ] Het spel begint na een tijdje automatisch opnieuw. Dit kan handmatig onderbroken worden door een commando te sturen naar de server.
+ 	- [ ] De overall score tussen beide teams wordt bijgehouden.
+	- [ ] Als het spel opnieuw begint, wisselen de torens en bibliotheken van beide teams van plek.
+	- [ ] Boeken laten ophalen bij meerdere planken/bakken, om opstoppingen te voorkomen?
+	- [ ] Drones die te lang stilhangen verdwijnen (om opstoppingen te voorkomen).
+	- [ ] Als een drone lang niet beweegt óf heel ver uit beeld vliegt, telt niet meer als teamlid (Hierdoor heeft een team geen last van spelers die bezig zijn met het verbeteren van hun software of 'away from keyboard' zijn.)
+- [ ] GUI maken
+	- [ ] Dit is een gezamenlijk scherm maken om de game full-screen te kunnen laten zien (vooraan op een groot scherm/projector).
+	- [ ] Het is een client die zijn updates krijgt van de server.	
+	- [ ] We zouden ook kunnen kijken of dit scherm een webpagina zou kunnen zijn die de deelnemers ook op hun eigen computer kunnen openen zodat ze daar de voortgang van het spel kunnen volgen, dat is waarschijnlijk wel zo praktisch. 
 	- [ ] De look-and-feel kan [ontzettend basic](https://berbasoft.com/simplegametutorials/pygamezero/snake/) zijn, in ieder geval om mee te beginnen.
 	- [ ] Het spel is single-screen en 2D.
 	- [ ] De drones en boeken zijn simpele rechthoeken met een middelpunt dat we gebruiken om afstanden tussen spel-objecten te bepalen.
@@ -57,15 +73,7 @@ Als je drone de bodem raakt, dan verschijnt hij na een paar seconden opnieuw aan
 	- [ ] Elke drone krijgt in beeld de kleur van het eigen team.
 	- [ ] Bij elke drone de naam in beeld laten zien.
 	- [ ] Als spelers disconnecten verdwijnt hun drone.
-	- [ ] Als een nieuwe speler inlogt en het aantal drones is niet gelijk voor beide teams, laat de server dan even later een drone toevoegen voor het andere team (om het eerlijk te houden). Die drone vliegt weg als een nieuwe drone zich meldt voor dat team óf als het eerste team een speler kwijtraakt.
-	- [ ] Geef alle drones dezelfde snelheid; spelers kunnen de drones alleen een richting geven of laten stilstaan.
-	- [ ] Als een drone verder daalt dan de grond dan is dat een crash.
 	- [ ] Het spel laat een feestelijk *win screen* zien als één team het doel bereikt heeft. (Eventueel met de ranglijst van de drones met de meest geplaatste boeken.)
-	- [ ] Het spel begint opnieuw nadat we een tijdje het win screen gezien hebben. De overall score tussen beide teams wordt bijgehouden.
-	- [ ] Als het spel opnieuw begint, wisselen de torens en bibliotheken van beide teams van plek.
-	- [ ] Boeken laten ophalen bij meerdere planken/bakken, om opstoppingen te voorkomen?
-	- [ ] Drones die te lang stilhangen verdwijnen (om opstoppingen te voorkomen).
-	- [ ] Als een drone lang niet beweegt óf heel ver uit beeld vliegt, telt niet meer als teamlid (Hierdoor heeft een team geen last van spelers die bezig zijn met het verbeteren van hun software of 'away from keyboard' zijn.)
 - [ ] Client-software maken. 
 	- [ ] Ik heb zelf al eens een begin gemaakt met dit project in Pygame, maar ik heb inmiddels gezien dat er [Pygame Zero](https://pygame-zero.readthedocs.io/en/latest/index.html) is dat specifiek bedoeld is voor een educatieve setting. Zie ook [deze handleiding](https://electronstudio.github.io/pygame-zero-book/) en [deze](https://aposteriori.trinket.io/game-development-with-pygame-zero#/intro-to-pygame-zero/intro-and-installation) en [deze voorbeelden](https://berbasoft.com/simplegametutorials/pygamezero/).
 	  (Alternatieven zijn [JavaScript/HTML](https://blog.logrocket.com/best-javascript-html5-game-engines/), [Javascript-Nodejs](https://neatpatel.github.io/multiplayer-game/) of [Godot](https://godotengine.org/).) Dit is trouwens alleen nodig als we ook willen dat de kinderen een lokale versie zien van hun game! De client hoeft (in ieder geval in het begin) alleen maar een script te zijn dat instructies geeft aan de drone op de server; we zouden het dus ook bij pure Python kunnen houden! Dat kunnen ze direct schrijven in Thonny of een andere editor en klaar, zonder dat er externe libraries geïnstalleerd hoeven te worden. Eventueel kunnen we ook instructies maken voor twee varianten, Python én Javascript (omdat dat makkelijker is op Chromebooks). 
