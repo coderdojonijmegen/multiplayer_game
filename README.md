@@ -62,7 +62,7 @@ Als je drone de bodem raakt, dan verschijnt hij na een paar seconden opnieuw aan
 	- [ ] Boeken laten ophalen bij meerdere planken/bakken, om opstoppingen te voorkomen?
 	- [ ] Drones die te lang stilhangen verdwijnen (om opstoppingen te voorkomen).
 	- [ ] Als een drone lang niet beweegt óf heel ver uit beeld vliegt, telt niet meer als teamlid (Hierdoor heeft een team geen last van spelers die bezig zijn met het verbeteren van hun software of 'away from keyboard' zijn.)
-- [ ] GUI maken
+- [ ] Visualisatie-venster maken
 	- [ ] Dit is een gezamenlijk scherm maken om de game full-screen te kunnen laten zien (vooraan op een groot scherm/projector).
 	- [ ] Het is een client die zijn updates krijgt van de server.	
 	- [ ] We zouden ook kunnen kijken of dit scherm een webpagina zou kunnen zijn die de deelnemers ook op hun eigen computer kunnen openen zodat ze daar de voortgang van het spel kunnen volgen, dat is waarschijnlijk wel zo praktisch. 
