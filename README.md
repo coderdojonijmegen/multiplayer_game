@@ -48,8 +48,11 @@ Als je drone de bodem raakt, dan verschijnt hij na een paar seconden opnieuw aan
 	- [ ] Server publiceert steeds de posities van alle drones en andere elementen
 	- [ ] Server slaat steeds de input van de clients op (posities en andere eigenschappen van de drones)
 - [ ] Code schrijven voor communicatie tussen client en server (en de handleiding voor de client maken). [Network Zero](https://networkzero.readthedocs.io/en/latest/index.html) is specifiek gemaakt voor een educatieve setting, dus als we Pygame Zero gebruiken voor de client (zie hieronder) dan ligt Network Zero voor de hand. Evt. MQTT gebruiken?
-- [ ] Multiplayer game maken op basis van input van clients. Zie gameplay hierboven. (Dit is dus niet iets dat de kinderen maken. We maken deze game zodat de clients die de kinderen maken aan deze game mee kunnen doen.)
-	- [ ] Het spel is single-screen en 2D.
+- [ ] Multiplayer game maken op basis van input van clients.
+	- [ ] De game is de scheidsrechter die het spelverloop en de interactie tussen spelers regelt en die bepaalt of spelers nog meedoen.
+	- [ ] Zie gameplay hierboven. (Dit is dus niet iets dat de kinderen maken. We maken deze game zodat de clients die de kinderen maken aan deze game mee kunnen doen.)
+ 	- [ ] De game communiceert met de server om input van de clients te krijgen en om aan alle clients te publiceren wat de posities van alle spel-elementen zijn.
+	- [ ] Het spel is single-screen en 2D (zie het visualisatie-venster hieronder).
 	- [ ] Als spelers disconnecten verdwijnt hun drone.
 	- [ ] Als een nieuwe speler inlogt en het aantal drones is niet gelijk voor beide teams, laat de game dan even later een computer-drone toevoegen voor het andere team (om het eerlijk te houden). Die drone vliegt weg als een nieuwe drone zich meldt voor dat team óf als het eerste team een speler kwijtraakt.
 	- [ ] Geef alle drones dezelfde snelheid; spelers kunnen de drones alleen een richting geven of laten stilstaan.
