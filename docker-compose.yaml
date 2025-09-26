@@ -1,0 +1,23 @@
+services:
+  engine:
+    build:
+      context: engine/
+      dockerfile: engine.Dockerfile
+      target: prod
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./:/usr/src/app
+  server:
+    build:
+      context: server/
+      dockerfile: server.Dockerfile
+    ports:
+      - "8080:80"
+  mqttbroker:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+    restart: always
+    volumes:
+      - ./mosquitto:/mosquitto/config
