@@ -1,0 +1,29 @@
+services:
+  engine:
+    build:
+      context: engine/
+      dockerfile: engine.Dockerfile
+      target: prod
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./:/usr/src/app
+  server:
+    build:
+      context: server/
+      dockerfile: server.Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - mqtt_ip=mqttbroker
+      - mqtt_port=1883
+      - mqtt_username=ninja
+      - mqtt_password=welkom!
+  mqttbroker:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+    restart: always
+    volumes:
+      - ./mosquitto:/mosquitto/config

@@ -1,7 +1,8 @@
 {
   "name": "Haskell Server Dev Container",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "../engine/engine.Dockerfile",
+    "target": "dev"
   },
   "customizations": {
     "vscode": {

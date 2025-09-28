@@ -1,0 +1,4 @@
+dist-newstyle/
+.env
+.idea/
+__pycache__/
