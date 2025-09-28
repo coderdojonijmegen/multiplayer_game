@@ -38,7 +38,7 @@ class GameClient {
 
     #initMqttApp(clientId) {
         let mqtt_client = mqtt.connect(
-            `ws://${this.brokerAddress}:8084`,
+            `wss://${this.brokerAddress}/mqtt`,
             {
                 clientId: clientId,
                 username: "ninja",

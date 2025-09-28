@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-
+import base64
+import logging
 from json import dumps
 
 from flask import Flask, request, jsonify, render_template
-import base64
 
 from config import Config
 from mqtt_app import MqttApp
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 config = Config.load()
 
 
 def init(mqtt_app: MqttApp):
     app = Flask(__name__)
+    app.logger.handlers = logger.handlers
 
     @app.route('/')
     def dashboard():
@@ -24,8 +27,11 @@ def init(mqtt_app: MqttApp):
 
     @app.route('/register', methods=['POST'])
     def register_player():
-        client_ip = request.remote_addr
+        ip_behind_proxy = request.headers.environ[
+            "HTTP_X_FORWARDED_FOR"] if "HTTP_X_FORWARDED_FOR" in request.headers.environ else None
+        client_ip = ip_behind_proxy if ip_behind_proxy else request.remote_addr
         client_id = base64.b64encode(client_ip.encode("ascii")).decode("ascii")
+        logger.info(f"client connected from {client_ip} with id {client_id}")
         mqtt_app.publish("drone-game/client/register", dumps({"client_id": client_id}))
         return jsonify({"client_id": client_id}), 200
 
