@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drone-Game dashboard</title>
+    <script src="/static/mqtt.min.js"></script>
+    <script type="module" src="/static/client.js"></script>
+</head>
+<body>
+<h2>Connected clients:</h2>
+<div id="clientConnectionLog">
+
+</div>
+<script type="module">
+    import { GameClient } from "/static/client.js"
+    const logElem = document.getElementById("clientConnectionLog");
+
+    const client = new GameClient("localhost", ["clients/drone-game/#"]);
+    client.onStatusUpdate = (topic, message) => {
+      client.log(topic);
+      if (topic.startsWith("clients/drone-game/")) {
+          logElem.innerHTML += `${topic} - ${message}<br>`;
+      }
+    };
+</script>
+</body>
+</html>

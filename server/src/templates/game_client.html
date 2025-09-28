@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Client</title>
+    <script src="/static/mqtt.min.js"></script>
+</head>
+<body>
+<script type="module">
+    import { GameClient } from "/static/client.js"
+
+    const client = new GameClient("localhost", [], true);
+    client.onStatusUpdate = (topic, message) => {
+      client.log(topic);
+    };
+</script>
+
+</body>
+</html>
