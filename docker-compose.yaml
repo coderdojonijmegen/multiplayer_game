@@ -23,7 +23,7 @@ services:
     image: eclipse-mosquitto
     ports:
       - "1883:1883"
-      - "8083:8083"
+      - "8084:8083"
     restart: always
     volumes:
       - ./mosquitto:/mosquitto/config
