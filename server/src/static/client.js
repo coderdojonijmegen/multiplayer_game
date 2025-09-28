@@ -3,7 +3,7 @@ const mqtt = window.mqtt;
 
 
 class GameClient {
-    constructor(brokerAddress = BROKER_ADDRESS, topics = [], debug=false) {
+    constructor(topics = [], brokerAddress = BROKER_ADDRESS, debug=false) {
         this.onStatusUpdate = (topic, message) => {
         };
         this.brokerAddress = brokerAddress;

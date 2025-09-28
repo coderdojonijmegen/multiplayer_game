@@ -9,7 +9,7 @@
 <script type="module">
     import { GameClient } from "/static/client.js"
 
-    const client = new GameClient("localhost", [], true);
+    const client = new GameClient([], true);
     client.onStatusUpdate = (topic, message) => {
       client.log(topic);
     };

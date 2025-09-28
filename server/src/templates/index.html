@@ -15,7 +15,7 @@
     import { GameClient } from "/static/client.js"
     const logElem = document.getElementById("clientConnectionLog");
 
-    const client = new GameClient("localhost", ["clients/drone-game/#"]);
+    const client = new GameClient(["clients/drone-game/#"]);
     client.onStatusUpdate = (topic, message) => {
       client.log(topic);
       if (topic.startsWith("clients/drone-game/")) {
