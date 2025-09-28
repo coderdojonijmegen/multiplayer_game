@@ -20,7 +20,7 @@ ENV PATH="/home/$USERNAME/.cabal/bin:/home/$USERNAME/.local/bin:$PATH"
 
 FROM dev as ci
 
-COPY --chown=vscode:vscode engine/ .
+COPY --chown=vscode:vscode . .
 RUN cabal update
 RUN cabal build
 RUN cp $(cabal list-bin multiplayer-game) /workspaces/haskell-server-app

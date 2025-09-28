@@ -73,8 +73,8 @@ jobs:
         id: build-and-push-engine
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
-          context: .
-          file: engine.Dockerfile
+          context: ./engine/
+          file: engine/engine.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta_engine.outputs.tags }}
           labels: ${{ steps.meta_engine.outputs.labels }}
@@ -95,8 +95,8 @@ jobs:
         id: build-and-push-server
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
-          context: .
-          file: server.Dockerfile
+          context: ./server/
+          file: server/server.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta_server.outputs.tags }}
           labels: ${{ steps.meta_server.outputs.labels }}
