@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 config = Config.load()
 
 drones = [
-    Drone("MTI3LjAuMC4x", (0, 0), []),
+    Drone("ODYuOTUuMjEwLjI1MQ==", (0, 0), []),
 ]
 for i in range(5):
     drones.append(Drone(f"drone{i}", Drone.random_position(), []))
