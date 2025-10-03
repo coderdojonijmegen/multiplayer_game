@@ -24,7 +24,7 @@ class Config:
                     "username": environ["mqtt_username"],
                     "password": environ["mqtt_password"],
                 },
-                "client_id": environ.get("client_id", "drone-game/server"),
+                "client_id": environ.get("client_id", "drone-game/bot"),
                 "interval": float(environ.get("interval", 0.2)),
             })
         except KeyError as e:
