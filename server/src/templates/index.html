@@ -7,21 +7,22 @@
     <script type="module" src="/static/client.js"></script>
 </head>
 <body>
-<h2>Connected clients:</h2>
-<div id="clientConnectionLog">
+<div class="clientLog">
+    <h2>Verbonden cliënten</h2>
+    <div id="clientConnectionLog">
+</div>
+<div class="playground">
+    <h2>Speelveld</h2>
+    <canvas id="gamePlayGround" width=1000 height=600></canvas>
+</div>
 
 </div>
 <script type="module">
-    import { GameClient } from "/static/client.js"
-    const logElem = document.getElementById("clientConnectionLog");
+    import { Dashboard } from "/static/dashboard.js"
+    import { GameClient } from "/static/client.js";
 
-    const client = new GameClient(["clients/drone-game/#"]);
-    client.onStatusUpdate = (topic, message) => {
-      client.log(topic);
-      if (topic.startsWith("clients/drone-game/")) {
-          logElem.innerHTML += `${topic} - ${message}<br>`;
-      }
-    };
+    const client = new GameClient("dashboard", ["clients/drone-game/#"]);
+    const dashboard = new Dashboard(client);
 </script>
 </body>
 </html>

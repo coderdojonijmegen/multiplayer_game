@@ -3,9 +3,10 @@ const mqtt = window.mqtt;
 
 
 class GameClient {
-    constructor(topics = [], brokerAddress = BROKER_ADDRESS, debug=false) {
+    constructor(name, topics = [], brokerAddress = BROKER_ADDRESS, debug=false) {
         this.onStatusUpdate = (topic, message) => {
         };
+        this.name = name;
         this.brokerAddress = brokerAddress;
         this.topics = topics;
         this.debug = debug;
@@ -22,7 +23,7 @@ class GameClient {
             .then(clientId => {
                 this.log("ClientId: " + clientId)
                 this.clientId = clientId;
-                this.topics.push(`drone-game/client/state/${clientId}`);
+                this.topics.push(`drone-game/client/${clientId}`);
                 this.#initMqttApp(clientId);
                 this.#subscribeToTopics();
                 this.#setupOnStatusUpdateHandler();

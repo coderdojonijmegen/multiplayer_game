@@ -39,6 +39,6 @@ def init(mqtt_app: MqttApp):
 
 
 if __name__ == '__main__':
-    mqtt_app = MqttApp(config.mqtt_broker_config, "drone-game/server")
+    mqtt_app = MqttApp(config.mqtt_broker_config, config.client_id)
     mqtt_app.func = init
     mqtt_app.start()
