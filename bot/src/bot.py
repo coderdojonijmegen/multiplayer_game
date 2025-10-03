@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-import base64
 import logging
 from json import dumps
-
-from flask import Flask, request, jsonify, render_template
 
 from config import Config
 from drone import Drone
