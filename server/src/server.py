@@ -27,10 +27,11 @@ def init(mqtt_app: MqttApp):
 
     @app.route('/register', methods=['POST'])
     def register_player():
+        body = request.json
         ip_behind_proxy = request.headers.environ[
             "HTTP_X_FORWARDED_FOR"] if "HTTP_X_FORWARDED_FOR" in request.headers.environ else None
         client_ip = ip_behind_proxy if ip_behind_proxy else request.remote_addr
-        client_id = base64.b64encode(client_ip.encode("ascii")).decode("ascii")
+        client_id = f"{client_ip}/{body['role']}"
         logger.info(f"client connected from {client_ip} with id {client_id}")
         mqtt_app.publish("drone-game/client/register", dumps({"client_id": client_id}))
         return jsonify({"client_id": client_id}), 200

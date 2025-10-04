@@ -23,7 +23,6 @@ class PlayGround {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             const drones = JSON.parse(message).game.drone_positions;
-            console.log(drones);
             for (const [idx, drone] of drones.entries()) {
                 this.ctx.fillStyle = this.#COLORS [idx % this.#COLORS.length];
                 this.ctx.fillRect(drone.position.x * this.#W, drone.position.y * this.#H, this.#W, this.#H);

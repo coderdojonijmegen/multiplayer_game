@@ -46,3 +46,6 @@ class Drone:
                 "y": self.position[1]
             }
         }
+
+    def __eq__(self, other):
+        return self.drone_id == other.drone_id

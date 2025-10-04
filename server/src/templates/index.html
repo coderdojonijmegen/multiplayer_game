@@ -10,19 +10,23 @@
 <div class="clientLog">
     <h2>Verbonden cliënten</h2>
     <div id="clientConnectionLog">
+    </div>
 </div>
 <div class="playground">
     <h2>Speelveld</h2>
     <canvas id="gamePlayGround" width=1000 height=600></canvas>
 </div>
 
-</div>
 <script type="module">
-    import { Dashboard } from "/static/dashboard.js"
-    import { GameClient } from "/static/client.js";
+    import {Dashboard} from "/static/dashboard.js"
+    import {GameClientBuilder} from "/static/client.js";
 
-    const client = new GameClient("dashboard", ["clients/drone-game/#"]);
-    const dashboard = new Dashboard(client);
+    new GameClientBuilder()
+        .withRole("dashboard")
+        .withTopics(["clients/drone-game/#"])
+        .build()
+        .connect()
+        .then((client) => new Dashboard(client));
 </script>
 </body>
 </html>

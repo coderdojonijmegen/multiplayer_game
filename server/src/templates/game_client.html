@@ -6,14 +6,34 @@
     <script src="/static/mqtt.min.js"></script>
 </head>
 <body>
-<script type="module">
-    import { GameClient } from "/static/client.js"
+<div class="game-editor">
+    <label for="game-editor">Game Editor</label>
+    <textarea id="game-editor" name="game-editor" rows="10" cols="50">
+    </textarea>
+    <button id="run-game">Run Game</button>
+    <label for="game-log">Game Log</label>
+    <textarea id="game-log" name="game-log" rows="10" cols="50"></textarea>
+</div>
+<div class="playground">
+    <h2>Speelveld</h2>
+    <canvas id="gamePlayGround" width=1000 height=600></canvas>
+</div>
 
-    const client = new GameClient([], true);
-    client.onStatusUpdate = (topic, message) => {
-      client.log(topic);
-    };
+<script type="module">
+    import {GameClientBuilder} from "/static/client.js"
+    import {GameEditor} from "/static/game-editor.js";
+
+
+    new GameClientBuilder()
+        .withDebug(true)
+        .withTopics(["clients/drone-game/#"])
+        .build()
+        .connect()
+        .then(client => {
+            new GameEditor(client, "game-editor", "run-game", "game-log");
+        });
 </script>
+
 
 </body>
 </html>
