@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 config = Config.load()
 
-gamer_drone = Drone("127.0.0.1/gamer", (0, 0), [])
+gamer_drone = Drone(config.gamer_client_id, (0, 0), [])
 drones = [
     Drone(config.dashboard_client_id, (0, 0), []),
 ]
@@ -20,7 +20,7 @@ for i in range(5):
 
 def publish_state(mqtt: MqttApp):
     for drone in drones:
-        if drone.drone_id != "127.0.0.1/gamer":
+        if drone.drone_id != config.gamer_client_id:
             drone.next_position()
 
         mqtt.publish(f"drone-game/client/{drone.drone_id}", dumps({
@@ -32,22 +32,21 @@ def publish_state(mqtt: MqttApp):
 
 
 def on_drone_message(topic, message):
-    if topic == "clients/drone-game/127.0.0.1/gamer":
+    if topic == f"clients/drone-game/{config.gamer_client_id}":
         gamer_drone.position = (0, 10)
         if gamer_drone not in drones:
             drones.append(gamer_drone)
             logger.info(f"added drone {gamer_drone.drone_id}")
-    if topic == "drone-game/client/127.0.0.1/gamer/action":
+    if topic == f"drone-game/client/{config.gamer_client_id}/action":
         action = loads(message)
         gamer_drone.position = action["position"]["x"], action["position"]["y"]
-        # logger.info(gamer_drone)
 
 
 if __name__ == '__main__':
     mqtt_app = MqttApp(config.mqtt_broker_config, config.client_id)
     mqtt_app.loop_func = publish_state, config.interval
     mqtt_app.on_message = on_drone_message, [
-        ("clients/drone-game/127.0.0.1/gamer", 0),
-        ("drone-game/client/127.0.0.1/gamer/action", 0)
+        (f"clients/drone-game/{config.gamer_client_id}", 0),
+        (f"drone-game/client/{config.gamer_client_id}/action", 0)
     ]
     mqtt_app.start()
