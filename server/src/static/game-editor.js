@@ -12,19 +12,20 @@ class GameEditor {
             this.codeElem.value = code;
         } else {
             this.codeElem.value = `let xDir = 1;
-    this.onStatusUpdate = (status) => {
-        if (status.drone.position.x < 0 || status.drone.position.x > 100) {
-            xDir = -xDir;
-            this.#log(\`xDir flipped to \${xDir}\`);
+this.onStatusUpdate = (status) => {
+    this.#log(\`x=\${status.drone.position.x}\`);
+    if (status.drone.position.x <= 0) {
+        xDir = 1;
+    else if (status.drone.position.x >= 100) {
+        xDir = -1;
+    }
+    this.#sendAction({
+        "position": {
+            "x": status.drone.position.x + xDir,
+            "y": Math.sin(status.drone.position.x/2) * 5 + 30
         }
-        this.#sendAction({
-            "position": {
-                "x": status.drone.position.x + xDir,
-                "y": status.drone.position.y
-            }
-        });
-}
-        `;
+    });
+}`;
         }
         this.gameLogElem = document.getElementById(gameLogElemId);
         this.runButton = document.getElementById(buttonElementId);
@@ -55,7 +56,9 @@ class GameEditor {
     }
 
     #log(message) {
-        this.gameLogElem.value = `${new Date().toLocaleTimeString("nl")} - ${message} \n${this.gameLogElem.value}`;
+        let loglines = this.gameLogElem.value.split('\\n');
+        loglines.unshift(`${new Date().toLocaleTimeString("nl")} - ${message}`);
+        this.gameLogElem.value = loglines.slice(0, 20).join('\\n');
     }
 
 }

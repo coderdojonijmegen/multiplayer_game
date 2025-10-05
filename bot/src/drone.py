@@ -5,8 +5,8 @@ from random import randint
 @dataclass
 class Drone:
     drone_id: str
-    position: tuple[int, int]
-    path: list[tuple[int, int]]
+    position: tuple[int, int] = (0, 0)
+    path: list[tuple[int, int]] = None
     position_next: tuple[int, int] = None
     idx: int = 0
 

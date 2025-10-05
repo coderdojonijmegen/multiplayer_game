@@ -8,8 +8,6 @@ from mqtt_app import MqttConfig
 class Config:
     mqtt_broker_config: MqttConfig
     client_id: str
-    dashboard_client_id: str
-    gamer_client_id: str
     interval: float
 
     def __post_init__(self):
@@ -28,8 +26,6 @@ class Config:
                 },
                 "client_id": environ.get("client_id", "drone-game/bot"),
                 "interval": float(environ.get("interval", 0.2)),
-                "dashboard_client_id": environ.get("dashboard_client_id", "86.95.210.251/dashboard"),
-                "gamer_client_id": environ.get("gamer_client_id", "86.95.210.251/gamer"),
             })
         except KeyError as e:
             print(str(e.add_note("Did you set the environment variables?")))
