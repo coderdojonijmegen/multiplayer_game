@@ -16,7 +16,7 @@ this.onStatusUpdate = (status) => {
     this.#log(\`x=\${status.drone.position.x}\`);
     if (status.drone.position.x <= 0) {
         xDir = 1;
-    else if (status.drone.position.x >= 100) {
+    } else if (status.drone.position.x >= 100) {
         xDir = -1;
     }
     this.#sendAction({
@@ -56,9 +56,9 @@ this.onStatusUpdate = (status) => {
     }
 
     #log(message) {
-        let loglines = this.gameLogElem.value.split('\\n');
+        let loglines = this.gameLogElem.value.split('\n');
         loglines.unshift(`${new Date().toLocaleTimeString("nl")} - ${message}`);
-        this.gameLogElem.value = loglines.slice(0, 20).join('\\n');
+        this.gameLogElem.value = loglines.slice(0, 20).join('\n');
     }
 
 }
