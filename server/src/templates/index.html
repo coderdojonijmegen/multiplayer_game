@@ -23,6 +23,7 @@
 
     new GameClientBuilder()
         .withRole("dashboard")
+        .withShowConnectionStatus(false)
         .withTopics(["clients/drone-game/#"])
         .build()
         .connect()

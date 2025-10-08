@@ -5,8 +5,11 @@ load_dotenv()
 
 
 def test_register_player():
-    r = post("http://127.0.0.1:4000/register")
+    r = post("http://127.0.0.1:4000/register", json={
+        "role": "gamer",
+        "platform": "js"
+    })
     r.raise_for_status()
     client_id = r.json()["client_id"]
 
-    assert client_id == "MTI3LjAuMC4x"  # 127.0.0.1
+    assert client_id == "127.0.0.1/gamer/js"

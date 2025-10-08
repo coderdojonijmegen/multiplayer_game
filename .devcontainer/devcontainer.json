@@ -10,7 +10,8 @@
         "haskell.haskell",
         "justus-w.haskell-ghci-dap",
         "sanaajani.hie-vscode",
-        "mrmoore.vscode-integrated-haskell-shell"
+        "mrmoore.vscode-integrated-haskell-shell",
+        "vstirbu.vscode-mermaid-preview"
       ]
     }
   },

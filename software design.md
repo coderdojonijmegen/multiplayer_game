@@ -45,6 +45,25 @@ De Ninja speelt het spel op haar/zijn laptop. Dat kan met een Python script in T
 
 ## Clients
 
+De clients hebben verschillende rollen en geven die ook mee aan de server voor het bepalen van het client ID. Dit maakt het mogelijk om zowel een dashboard als gamer rol
+op één machine te laten werken. Het clientId voor het verbinden aan de MQTT broker moet uniek zijn, dus met enkel het IP adres als clientId gebruiken zou het dan niet mogelijk
+zijn om zowel een dashboard als gamer vanaf één machine te draaien. De gamer kan vervolgens nog geïmplementeerd worden in Javascript en Python en van dezelfde machine worden
+uitgevoerd, hoewel dat een uitzonderlijke situatie zal zijn.
+
+Mogelijke rollen zijn:
+
+- gamer/py
+- gamer/js
+- dashboard/js
+
+De mogelijke clientId's worden dan:
+
+- `<IP>/gamer/py`: gamer geïmplementeerd in Python
+- `<IP>/gamer/js`: gamer geïmplementeerd in Javascript
+- `<IP>/dashboard/js`: dashboard geïmplementeerd in Javascript, tevens enige implmentatie
+- `engine`: game engine
+- `bot`: bot die eventueel ingezet wordt om de drones te laten bewegen; handig bij het testen van de playground
+
 ### Javascript
 
 #### Dashboard
@@ -58,21 +77,18 @@ sequenceDiagram
     participant engine
 
     ninja ->> dashboard: open dashboard in browser<br/>drone-game.coderdojo-nijmegen.nl
-    dashboard ->> webserver: laadt client van server
-    webserver -->> dashboard: javascript module
+    dashboard ->> webserver: laadt client en dashboard javascript modules van server
+    webserver -->> dashboard: client en dashboard javascript modules
     dashboard ->> javascript_client: start client
-    javascript_client ->> webserver: registreer client
-    webserver ->> webserver: maak uniek ID<br/>(base64 gecodeerd IP adres van de client)
-    webserver -) mqtt_broker: kondig client aan met uniek ID<br/>op topic "drone-game/client/register"
-    mqtt_broker -) engine: onRegister: "drone-game/client/register"<br/>voeg client toe aan game state
-    webserver -->> javascript_client: uniek ID
+    javascript_client ->> webserver: haal clientId op bij de server<br>rol: dashboard, platform: js
+    webserver ->> webserver: concat IP, rol en platform<br>tot uniek ID: <IP>/<rol>/<platform>
+    webserver -->> javascript_client: clientId
 
-    javascript_client ->> mqtt_broker: abonneer op "drone-game/dashboard"
-    engine -) mqtt_broker: publish: dashboard data<br>to "drone-game/dashboard"
-    mqtt_broker -) javascript_client: onDashboardUpdate: "drone-game/dashboard"<br>teken dashboard
+    javascript_client ->> mqtt_broker: verbindt met broker en <br>publiceer huidige datum/tijd op<br>"clients/drone-game/<clientId>"
+    mqtt_broker --) javascript_client: onClientsUpdate: "clients/drone-game/#35;"<br>werk overzicht van clients bij
+    mqtt_broker --) javascript_client: onGamestateUpdate: "drone-game/client/<clientId>"<br>teken dashboard
     javascript_client -) dashboard: update dashboard
    
-
 ```
 
 #### Drone besturen
@@ -86,29 +102,33 @@ sequenceDiagram
     participant engine
 
     ninja ->> dashboard: open dashboard in browser<br/>drone-game.coderdojo-nijmegen.nl
-    dashboard ->> webserver: laadt client van server
-    webserver -->> dashboard: javascript module
+    dashboard ->> webserver: laadt client en dashboard javascript modules van server
+    webserver -->> dashboard: client en dashboard javascript modules
     dashboard ->> javascript_client: start client
-    javascript_client ->> webserver: registreer client
-    webserver ->> webserver: maak uniek ID<br/>(base64 gecodeerd IP adres van de client)
-    webserver -) mqtt_broker: kondig client aan met uniek ID<br/>op topic "drone-game/client/register"
-    mqtt_broker -) engine: onRegister: "drone-game/client/register"<br/>voeg client toe aan game state
-    webserver -->> javascript_client: uniek ID
+    javascript_client ->> webserver: haal clientId op bij de server<br>rol: dashboard, platform: js
+    webserver ->> webserver: concat IP, rol en platform<br>tot uniek ID: <IP>/<rol>/<platform>
+    webserver -->> javascript_client: clientId
 
-    javascript_client ->> mqtt_broker: abonneer op "drone-game/client/<uniek ID>"
+    javascript_client ->> mqtt_broker: verbindt met broker en <br>publiceer huidige datum/tijd op<br>"clients/drone-game/<clientId>"
 
     loop voor elke game cycle
-        mqtt_broker -) javascript_client: onGameStateChange: "drone-game/client/<uniek ID>"<br>verwerk game state wijziging
+        mqtt_broker --) javascript_client: onGamestateUpdate: "drone-game/client/<clientId>"
         javascript_client ->> javascript_client: bereken volgende stap
-        javascript_client -) mqtt_broker: "drone-game/client/<uniek ID>/next_state"<br>publiceer volgende stap
-        mqtt_broker -) engine: onClientNextState: "drone-game/client/<uniek ID>/next_state"<br>voeg client next state toe aan game state
+        javascript_client -) mqtt_broker: "drone-game/client/<uclientId>/action"<br>publiceer volgende stap
+        mqtt_broker -) engine: onClientAction: "drone-game/client/<clientId>/action"<br>voeg client action toe aan game state
         engine ->> engine: onGameStateTrigger:<br>bereken nieuwe game state op<br>basis van input alle clients
-        engine -) mqtt_broker: publish: "drone-game/dashboard"<br>publiceer overall game state
         loop voor elke client
-            engine -) mqtt_broker: publish: "drone-game/client/<uniek ID>"<br>publiceer game state voor client
+            engine -) mqtt_broker: publish: "drone-game/client/<clientId>"<br>publiceer game state en client state
         end
     end
 ```
 
 # Topics
 
+## `clients/drone-game/<IP>/<rol>`
+
+Een client haalt 
+
+## `drone-game/client/<IP>/<rol>`
+
+## `drone-game/client/<IP>/gamer/action`

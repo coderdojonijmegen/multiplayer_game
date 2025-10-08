@@ -1,22 +1,24 @@
 const BROKER_ADDRESS = "drone-game.coderdojo-nijmegen.nl";
 const ROLE = "gamer"
+const PLATFORM = "js"
 const mqtt = window.mqtt;
 
 
 class GameClient {
-    constructor(topics = [], brokerAddress = BROKER_ADDRESS, role = ROLE, debug = false) {
+    constructor(topics, brokerAddress, role, showConnectionStatus) {
         this.onStatusUpdate = (topic, message) => {
         };
         this.role = role;
         this.brokerAddress = brokerAddress;
         this.topics = topics;
-        this.debug = debug;
+        this.showConnectionStatus = showConnectionStatus;
         this.debugElem = null;
         this.clientId = null;
         this.mqtt_client = null;
 
-        if (this.debug) {
+        if (this.showConnectionStatus) {
             let divElement = document.createElement("div");
+            divElement.classList.add("game-connection-status");
             document.getElementsByTagName("body")[0].appendChild(divElement);
             this.debugElem = divElement;
         }
@@ -41,7 +43,10 @@ class GameClient {
     #registerClient() {
         return fetch('/register', {
             method: 'POST',
-            body: JSON.stringify({"role": this.role}),
+            body: JSON.stringify({
+                "role": this.role,
+                "platform": PLATFORM
+            }),
             headers: {'Content-Type': 'application/json'}
         })
             .then(response => response.json())
@@ -94,7 +99,7 @@ class GameClient {
     }
 
     log(message) {
-        if (this.debug) {
+        if (this.showConnectionStatus) {
             this.debugElem.innerHTML += message + "<br>";
         }
         console.log(message);
@@ -107,7 +112,7 @@ class GameClientBuilder {
         this.topics = [];
         this.brokerAddress = BROKER_ADDRESS;
         this.role = ROLE;
-        this.debug = false;
+        this.showConnectionStatus = true;
     }
 
     withTopics(topics) {
@@ -125,13 +130,13 @@ class GameClientBuilder {
         return this;
     }
 
-    withDebug(debug) {
-        this.debug = debug;
+    withShowConnectionStatus(showConnectionStatus) {
+        this.showConnectionStatus = showConnectionStatus;
         return this;
     }
 
     build() {
-        return new GameClient(this.topics, this.brokerAddress, this.role, this.debug);
+        return new GameClient(this.topics, this.brokerAddress, this.role, this.showConnectionStatus);
     }
 }
 

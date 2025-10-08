@@ -25,8 +25,6 @@
 
 
     new GameClientBuilder()
-        .withDebug(true)
-        .withTopics(["clients/drone-game/#"])
         .build()
         .connect()
         .then(client => {
