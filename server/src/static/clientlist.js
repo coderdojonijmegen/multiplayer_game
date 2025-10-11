@@ -11,8 +11,9 @@ class ClientList {
             this.clientList[topic] = message;
             this.logElem.innerHTML = "";
             for (const [topic, message] of Object.entries(this.clientList)) {
-                let isThisDashboard = topic.includes(this.client.clientId) ? " - dit dashboard" : "";
-                this.logElem.innerHTML += `${topic} - ${message} ${isThisDashboard}<br>`;
+                const isThisDashboardId = topic.includes(this.client.clientId);
+                let isThisDashboard = isThisDashboardId ? " - dit dashboard" : "";
+                this.logElem.innerHTML += `${isThisDashboard? "<b>" : ""}${topic} - ${message} ${isThisDashboard}${isThisDashboard? "</b>" : ""}<br>`;
             }
         }
     }

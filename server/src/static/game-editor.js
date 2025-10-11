@@ -1,22 +1,11 @@
 import {PlayGround} from "/static/playground.js";
 
-class GameEditor {
-
-    constructor(client, codeElementId, buttonElementId, gameLogElemId) {
-        this.onStatusUpdate = (status) => {
-        };
-        this.client = client;
-        this.codeElem = document.getElementById(codeElementId);
-        let code = localStorage.getItem("userCode");
-        if (code) {
-            this.codeElem.value = code;
-        } else {
-            this.codeElem.value = `let xDir = 1;
+const CODE_EXAMPLE = `let xDir = 1;
 this.onStatusUpdate = (status) => {
     this.#log(\`x=\${status.drone.position.x}\`);
     if (status.drone.position.x <= 0) {
         xDir = 1;
-    } else if (status.drone.position.x >= 100) {
+    } else if (status.drone.position.x >= 160) {
         xDir = -1;
     }
     this.#sendAction({
@@ -26,10 +15,28 @@ this.onStatusUpdate = (status) => {
         }
     });
 }`;
+
+class GameEditor {
+
+    constructor(client) {
+        this.onStatusUpdate = (status) => {
+        };
+        this.client = client;
+        this.codeElem = document.getElementById("game-editor");
+        let code = localStorage.getItem("userCode");
+        if (code) {
+            this.codeElem.value = code;
+        } else {
+            this.codeElem.value = CODE_EXAMPLE;
         }
-        this.gameLogElem = document.getElementById(gameLogElemId);
-        this.runButton = document.getElementById(buttonElementId);
+        this.gameLogElem = document.getElementById("game-log");
+        this.runButton = document.getElementById("run-game");
         this.runButton.addEventListener("click", (event) => this.#onRun(event));
+        this.resetButton = document.getElementById("reset-code");
+        this.resetButton.addEventListener("click", (event) => {
+            this.codeElem.value = CODE_EXAMPLE;
+            localStorage.setItem("userCode", this.codeElem.value);
+        });
         this.playground = new PlayGround(client, "gamePlayGround");
         this.client.onStatusUpdate = (topic, message) => {
             if (!topic.startsWith("clients/drone-game/")) {
@@ -37,6 +44,9 @@ this.onStatusUpdate = (status) => {
             }
             this.playground.onStatusUpdate(topic, message);
         };
+         document.getElementById('toggleEditor').addEventListener('click', () => {
+             document.getElementById('editorOverlay').classList.toggle('hidden');
+         });
     }
 
     #onRun(event) {

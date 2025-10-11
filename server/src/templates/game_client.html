@@ -2,21 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Game Client</title>
+    <title>Drone-Game Client</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="/static/style.css" rel="stylesheet">
     <script src="/static/mqtt.min.js"></script>
 </head>
 <body>
-<div class="game-editor">
-    <label for="game-editor">Game Editor</label>
-    <textarea id="game-editor" name="game-editor" rows="10" cols="50">
-    </textarea>
-    <button id="run-game">Run Game</button>
-    <label for="game-log">Game Log</label>
-    <textarea id="game-log" name="game-log" rows="10" cols="50"></textarea>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Drone-Game Client</a>
+    <div class="d-flex ms-auto">
+        <button class="btn btn-outline-light" id="toggleEditor">Editor</button>
+        <button class="btn btn-outline-light ms-2" id="toggleConnectionLog">Verbinding</button>
+    </div>
+  </div>
+</nav>
+
+<div class="playground-container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Speelveld</h2>
+        </div>
+        <div class="card-body">
+            <canvas id="gamePlayGround" width="1600" height="800"></canvas>
+        </div>
+    </div>
+    <div id="connectionLogCard" class="card connection-log-overlay d-none shadow-lg">
+        <div class="card-header">
+            <h2>Verbinding</h2>
+        </div>
+        <div class="card-body">
+            <div id="clientConnectionLog"></div>
+        </div>
+    </div>
 </div>
-<div class="playground">
-    <h2>Speelveld</h2>
-    <canvas id="gamePlayGround" width=1000 height=600></canvas>
+
+<div id="editorOverlay" class="editorOverlay shadow-lg">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Editor</h2>
+            </div>
+            <div class="card-body">
+                <textarea id="game-editor" class="form-control" name="game-editor" rows="10"></textarea>
+                <button id="run-game" class="btn btn-primary mt-2">Run Game</button>
+                <button id="reset-code" class="btn btn-secondary mt-2">Reset code</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Log</h2>
+            </div>
+            <div class="card-body">
+                <textarea id="game-log" class="form-control" name="game-log" rows="5" readonly></textarea>
+            </div>
+        </div>
 </div>
 
 <script type="module">
@@ -28,7 +69,7 @@
         .build()
         .connect()
         .then(client => {
-            new GameEditor(client, "game-editor", "run-game", "game-log");
+            new GameEditor(client);
         });
 </script>
 

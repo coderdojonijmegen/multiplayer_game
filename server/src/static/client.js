@@ -12,15 +12,15 @@ class GameClient {
         this.brokerAddress = brokerAddress;
         this.topics = topics;
         this.showConnectionStatus = showConnectionStatus;
-        this.debugElem = null;
+        this.connectionStatusElem = null;
         this.clientId = null;
         this.mqtt_client = null;
 
         if (this.showConnectionStatus) {
-            let divElement = document.createElement("div");
-            divElement.classList.add("game-connection-status");
-            document.getElementsByTagName("body")[0].appendChild(divElement);
-            this.debugElem = divElement;
+            this.connectionStatusElem = document.getElementById("clientConnectionLog");
+            document.getElementById('toggleConnectionLog').addEventListener('click', () => {
+                document.getElementById('connectionLogCard').classList.toggle('d-none');
+            });
         }
     }
 
@@ -28,7 +28,7 @@ class GameClient {
         return new Promise((resolve, reject) => {
             this.#registerClient()
                 .then(clientId => {
-                    this.log("ClientId: " + clientId)
+                    this.log(`ClientId: <i>${clientId}</i>`)
                     this.clientId = clientId;
                     this.topics.push(`drone-game/client/${clientId}`);
                     this.#initMqttApp(clientId, () => {
@@ -71,8 +71,8 @@ class GameClient {
         );
 
         this.mqtt_client.on("connect", () => {
-            this.log("connected to MQTT broker");
-            this.mqtt_client.publish(`clients/drone-game/${clientId}`, `connected since ${new Date().toLocaleString("nl")}`, {
+            this.log(`verbonden met MQTT broker <i>${this.brokerAddress}</i>`);
+            this.mqtt_client.publish(`clients/drone-game/${clientId}`, `verbonden sinds ${new Date().toLocaleString("nl")}`, {
                 qos: 2,
                 retain: true
             });
@@ -83,7 +83,7 @@ class GameClient {
     #subscribeToTopics() {
         this.topics.forEach(topic => {
             this.mqtt_client.subscribe(topic, (err) => {
-                this.log("subscribed to " + topic);
+                this.log(`geabonneerd op <i>${topic}</i>`);
             });
         });
     }
@@ -100,7 +100,7 @@ class GameClient {
 
     log(message) {
         if (this.showConnectionStatus) {
-            this.debugElem.innerHTML += message + "<br>";
+            this.connectionStatusElem.innerHTML += message + "<br>";
         }
         console.log(message);
     }
