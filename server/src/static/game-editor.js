@@ -2,19 +2,36 @@ import {PlayGround} from "/static/playground.js";
 
 const CODE_EXAMPLE = `let xDir = 1;
 this.onStatusUpdate = (status) => {
-    this.#log(\`x=\${status.drone.position.x}\`);
+    this.#log(\`x=\${status.drone.position.x} y=\${status.drone.position.y}\`);
+    let hasBook = status.drone.hasBook;
+    let bookShelfX = status.game.bookShelfX;
+    let releasedBook = false;
     if (status.drone.position.x <= 0) {
         xDir = 1;
-    } else if (status.drone.position.x >= 160) {
+        hasBook = true;
+    } else if (status.drone.position.x >= 65) {
         xDir = -1;
+        hasBook = false;
+    }
+    let x = status.drone.position.x;
+    let y = status.drone.position.y;
+    if (hasBook && status.drone.position.x == bookShelfX) {
+        releasedBook = true;
+        hasBook = false;
+    } else {
+         x += xDir;
+         y = Math.round(Math.sin(status.drone.position.x*2/3) * 3 + 10)
     }
     this.#sendAction({
         "position": {
-            "x": status.drone.position.x + xDir,
-            "y": Math.sin(status.drone.position.x/2) * 5 + 30
-        }
+            "x": x,
+            "y": y
+        },
+        "hasBook": hasBook,
+         "releasedBook": releasedBook
     });
-}`;
+}
+`;
 
 class GameEditor {
 

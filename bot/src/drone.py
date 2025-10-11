@@ -6,6 +6,7 @@ from random import randint
 class Drone:
     drone_id: str
     position: tuple[int, int] = (0, 0)
+    has_book: bool = False
     path: list[tuple[int, int]] = None
     position_next: tuple[int, int] = None
     idx: int = 0
@@ -44,7 +45,8 @@ class Drone:
             "position": {
                 "x": self.position[0],
                 "y": self.position[1]
-            }
+            },
+            "hasBook": self.has_book
         }
 
     def __eq__(self, other):

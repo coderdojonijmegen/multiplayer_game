@@ -114,7 +114,7 @@ sequenceDiagram
     loop voor elke game cycle
         mqtt_broker --) javascript_client: onGamestateUpdate: "drone-game/client/<clientId>"
         javascript_client ->> javascript_client: bereken volgende stap
-        javascript_client -) mqtt_broker: "drone-game/client/<uclientId>/action"<br>publiceer volgende stap
+        javascript_client -) mqtt_broker: "drone-game/client/<clientId>/action"<br>publiceer volgende stap
         mqtt_broker -) engine: onClientAction: "drone-game/client/<clientId>/action"<br>voeg client action toe aan game state
         engine ->> engine: onGameStateTrigger:<br>bereken nieuwe game state op<br>basis van input alle clients
         loop voor elke client
@@ -125,7 +125,11 @@ sequenceDiagram
 
 # Topics
 
-## `clients/drone-game/<IP>/<rol>`
+## `clients/drone-game/#`
+
+* `clients/drone-game/<IP>/<rol>/<platform>`
+* `clients/drone-game/bot`
+* `clients/drone-game/engine`
 
 Een client haalt 
 
