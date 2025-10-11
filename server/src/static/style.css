@@ -10,7 +10,19 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0;
+    background-color: #454545;
+}
+.card {
+    border-color: #333 !important;
+}
+.card-body {
+    background-color: #575757 !important;
+    color: #ddd !important;
+}
+textarea {
+    background-color: #6a6a6a !important;
+    color: white !important;
+    border-color: #454545 !important;
 }
 #gamePlayGround {
     max-width: 100%;
@@ -31,9 +43,7 @@ body, html {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #ffffff;
     padding: 1rem;
-    border-top: 1px solid #dee2e6;
     transition: transform 0.3s ease-in-out;
     z-index: 1050;
 }
