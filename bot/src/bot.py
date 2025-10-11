@@ -61,7 +61,7 @@ def on_drone_message(topic, message):
             action = loads(message)
             drone.position = action["position"]["x"], action["position"]["y"]
             drone.has_book = action["hasBook"] if "hasBook" in action else False
-            if action["releasedBook"]:
+            if "releasedBook" in action and action["releasedBook"]:
                 books.append(Book(Position(action["position"]["x"] * 20, action["position"]["y"] * 20)))
                 logger.info(f"added book: {books[-1]}")
 
