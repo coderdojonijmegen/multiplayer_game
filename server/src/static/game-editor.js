@@ -79,7 +79,7 @@ class GameEditor {
 
     #sendAction(action) {
         action.drone_id = this.client.clientId;
-        this.client.publish(`drone-game/client/${this.client.clientId}/action`, JSON.stringify(action));
+        this.client.publish(`drone-game/client/${this.client.clientId}/action`, action);
     }
 
     #log(message) {

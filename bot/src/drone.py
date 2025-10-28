@@ -1,11 +1,15 @@
 from dataclasses import dataclass
 from random import randint
 
+from book import Position
+
 
 @dataclass
 class Drone:
     drone_id: str
-    position: tuple[int, int] = (0, 0)
+    position: Position
+    name: str = None
+    color: str = None
     has_book: bool = False
     path: list[tuple[int, int]] = None
     position_next: tuple[int, int] = None
@@ -37,14 +41,16 @@ class Drone:
         b = next_pos_y - a * next_pos_x
         next_x = x + x_dir
         next_y = int(a * next_x + b)
-        self.position = (next_x, next_y)
+        self.position = Position(next_x, next_y)
 
     def as_dict(self) -> dict:
         return {
             "drone_id": self.drone_id,
+            "name": self.name,
+            "color": self.color,
             "position": {
-                "x": self.position[0],
-                "y": self.position[1]
+                "x": self.position.x,
+                "y": self.position.y
             },
             "hasBook": self.has_book
         }

@@ -5,13 +5,16 @@ const mqtt = window.mqtt;
 
 
 class GameClient {
-    constructor(topics, brokerAddress, role, showConnectionStatus) {
+    constructor(topics, brokerAddress, role, showConnectionStatus, name, color) {
         this.onStatusUpdate = (topic, message) => {
         };
         this.role = role;
         this.brokerAddress = brokerAddress;
         this.topics = topics;
         this.showConnectionStatus = showConnectionStatus;
+        this.name = name;
+        this.color = color;
+        this.allowMultple = false;
         this.connectionStatusElem = null;
         this.clientId = null;
         this.mqtt_client = null;
@@ -34,6 +37,7 @@ class GameClient {
                     this.#initMqttApp(clientId, () => {
                         this.#subscribeToTopics();
                         this.#setupOnStatusUpdateHandler();
+                        this.#sendConfiguration();
                         resolve(this);
                     });
                 });
@@ -45,7 +49,8 @@ class GameClient {
             method: 'POST',
             body: JSON.stringify({
                 "role": this.role,
-                "platform": PLATFORM
+                "platform": PLATFORM,
+                "allowMultiple": this.allowMultple
             }),
             headers: {'Content-Type': 'application/json'}
         })
@@ -80,6 +85,13 @@ class GameClient {
         });
     }
 
+    #sendConfiguration() {
+        this.publish(`drone-game/client/${this.clientId}/config`, {
+            name: this.name,
+            color: this.color
+        });
+    }
+
     #subscribeToTopics() {
         this.topics.forEach(topic => {
             this.mqtt_client.subscribe(topic, (err) => {
@@ -95,7 +107,7 @@ class GameClient {
     }
 
     publish(topic, message) {
-        this.mqtt_client.publish(topic, message);
+        this.mqtt_client.publish(topic, JSON.stringify(message));
     }
 
     log(message) {
@@ -113,6 +125,8 @@ class GameClientBuilder {
         this.brokerAddress = BROKER_ADDRESS;
         this.role = ROLE;
         this.showConnectionStatus = true;
+        this.name = null;
+        this.color = null;
     }
 
     withTopics(topics) {
@@ -130,13 +144,23 @@ class GameClientBuilder {
         return this;
     }
 
+    withName(name) {
+        this.name = name;
+        return this;
+    }
+
+    withColor(color) {
+        this.color = color;
+        return this;
+    }
+
     withShowConnectionStatus(showConnectionStatus) {
         this.showConnectionStatus = showConnectionStatus;
         return this;
     }
 
     build() {
-        return new GameClient(this.topics, this.brokerAddress, this.role, this.showConnectionStatus);
+        return new GameClient(this.topics, this.brokerAddress, this.role, this.showConnectionStatus, this.name, this.color);
     }
 }
 

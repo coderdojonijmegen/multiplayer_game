@@ -1,0 +1,5 @@
+ip: drone-game.coderdojo-nijmegen.nl
+port: 443
+username: ninja
+password: welkom!
+websocket_path: /mqtt

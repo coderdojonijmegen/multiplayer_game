@@ -16,13 +16,22 @@ logger = logging.getLogger(__name__)
 config = Config.load()
 
 drones = []
-book_shelf_x = Random().randint(10, 60)
-books = [
-    Book(Position(book_shelf_x * 20, 697), True)
-]
+books = []
+book_shelf_x = 0
+
+def reset_books():
+    global books
+    global book_shelf_x
+    books.clear()
+    book_shelf_x = Random().randint(10, 60)
+    books = [
+        Book(Position(book_shelf_x * 10, 697), True)
+    ]
 
 
 def publish_state(mqtt: MqttApp):
+    if len(books) > 25:
+        reset_books()
     books_y_that_reached_bottom = [b.position.y for b in books if b.reached_bottom is True]
     books_max_y = min(books_y_that_reached_bottom) if books_y_that_reached_bottom else 700
     for book in books:
@@ -42,12 +51,41 @@ def publish_state(mqtt: MqttApp):
         }))
 
 
+def stijgen(drone: Drone):
+    drone.position.y -= 1
+
+
+def dalen(drone: Drone):
+    drone.position.y += 1
+
+
+def naar_links(drone: Drone):
+    drone.position.x -= 1
+
+
+def naar_rechts(drone: Drone):
+    drone.position.x += 1
+
+
+def stil_hangen(drone: Drone):
+    pass
+
+
+direction = {
+    "S": stijgen,
+    "D": dalen,
+    "L": naar_links,
+    "R": naar_rechts,
+    "H": stil_hangen,
+}
+
+
 def on_drone_message(topic, message):
     if topic.startswith(CLIENTS_DRONE_GAME):
         drone_id = topic.replace(CLIENTS_DRONE_GAME, "")
-        drone = Drone(drone_id)
+        drone = Drone(drone_id, Position(0,0))
         if message != "disconnected" and drone not in drones:
-            drone = Drone(drone_id, Drone.random_position())
+            drone = Drone(drone_id, Position(*Drone.random_position()))
             drones.append(drone)
             logger.info(f"added drone {drone.drone_id}")
         elif message == "disconnected" and drone in drones:
@@ -59,11 +97,19 @@ def on_drone_message(topic, message):
         if matched_drones := [d for d in drones if d.drone_id == drone_id]:
             drone = matched_drones[0]
             action = loads(message)
-            drone.position = action["position"]["x"], action["position"]["y"]
+            direction[action["direction"].upper()](drone)
             drone.has_book = action["hasBook"] if "hasBook" in action else False
             if "releasedBook" in action and action["releasedBook"]:
-                books.append(Book(Position(action["position"]["x"] * 20, action["position"]["y"] * 20)))
+                books.append(Book(Position(drone.position.x * 20, drone.position.y * 20)))
                 logger.info(f"added book: {books[-1]}")
+
+    if topic.startswith("drone-game/client/") and topic.endswith("/config"):
+        drone_id = topic.replace("drone-game/client/", "").replace("/config", "")
+        if matched_drones := [d for d in drones if d.drone_id == drone_id]:
+            drone = matched_drones[0]
+            drone_config = loads(message)
+            drone.name = drone_config["name"]
+            drone.color = drone_config["color"]
 
 
 if __name__ == '__main__':

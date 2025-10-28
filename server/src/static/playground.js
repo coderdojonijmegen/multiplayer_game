@@ -6,6 +6,7 @@ class Drone {
         this.ctx = ctx;
         this._position = null;
         this._color = null;
+        this._name = null;
         this._book = false;
     }
     
@@ -24,25 +25,37 @@ class Drone {
         return this;
     }
 
+    withName(name) {
+        this._name = name;
+        return this;
+    }
+
     draw() {
+        const x = this._position.x * this.#W;
+        const y = this._position.y * this.#H;
+
         this.ctx.fillStyle = this._color;
         // rotors
-        this.ctx.fillRect(this._position.x * this.#W, this._position.y * this.#H, 7, 3);
-        this.ctx.fillRect(this._position.x * this.#W + this.#W - 7, this._position.y * this.#H, 7, 3);
+        this.ctx.fillRect(x, y, 8, 2);
+        this.ctx.fillRect(x + this.#W - 8, y, 8, 2);
 
         // rotor pins
-        this.ctx.fillRect(this._position.x * this.#W + 2, this._position.y * this.#H + 3, 3, 3);
-        this.ctx.fillRect(this._position.x * this.#W + this.#W - 5, this._position.y * this.#H + 3, 3, 3);
+        this.ctx.fillRect(x + 3, y + 2, 2, 2);
+        this.ctx.fillRect(x + this.#W - 5, y + 2, 2, 2);
 
         // drone body
-        this.ctx.fillRect(this._position.x * this.#W + 3, this._position.y * this.#H + 6, 14, 3);
+        this.ctx.fillRect(x + 3, y + 4, 14, 3);
 
         // drone bookholder
-        this.ctx.fillRect(this._position.x * this.#W + 8, this._position.y * this.#H + 9, 4, 2);
+        this.ctx.fillRect(x + 8, y + 7, 4, 2);
+
+        // drone name
+        this.ctx.font = "11px sans-serif";
+        this.ctx.fillText(this._name, x - 10, y - 5);
 
         if (this._book) {
             this.ctx.fillStyle = "gray";
-            this.ctx.fillRect(this._position.x * this.#W + 2, this._position.y * this.#H + 11, 16, 4);
+            this.ctx.fillRect(x + 2, y + 9, 16, 4);
         }
     }
 }
@@ -74,7 +87,8 @@ class PlayGround {
             for (const [idx, drone] of drones.entries()) {
                 let dr = new Drone(this.ctx)
                     .position(drone.position)
-                    .color(this.#COLORS[idx % this.#COLORS.length]);
+                    .color(this.#COLORS[idx % this.#COLORS.length])
+                    .withName(drone.name);
                 if (drone.hasBook) {
                     dr.withBook();
                 }
@@ -83,9 +97,16 @@ class PlayGround {
 
             if (game.books) {
                 const books = game.books;
+                const booksAtBottom = game.books.filter(book => book.reachedBottom);
                 for (const book of books) {
                     this.ctx.fillStyle = "gray";
                     this.ctx.fillRect(book.position.x, book.position.y, 16, 4);
+                }
+
+                // book count
+                if (booksAtBottom.length > 0) {
+                    this.ctx.font = "11px sans-serif";
+                    this.ctx.fillText(`${booksAtBottom.length} books`, books[0].position.x + 25, 700 - 5);
                 }
             }
         }
