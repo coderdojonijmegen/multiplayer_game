@@ -47,8 +47,7 @@ De Ninja speelt het spel op haar/zijn laptop. Dat kan met een Python script in T
 
 De clients hebben verschillende rollen en geven die ook mee aan de server voor het bepalen van het client ID. Dit maakt het mogelijk om zowel een dashboard als gamer rol
 op één machine te laten werken. Het clientId voor het verbinden aan de MQTT broker moet uniek zijn, dus met enkel het IP adres als clientId gebruiken zou het dan niet mogelijk
-zijn om zowel een dashboard als gamer vanaf één machine te draaien. De gamer kan vervolgens nog geïmplementeerd worden in Javascript en Python en van dezelfde machine worden
-uitgevoerd, hoewel dat een uitzonderlijke situatie zal zijn.
+zijn om zowel een dashboard als gamer vanaf één machine te draaien. De gamer kan vervolgens nog geïmplementeerd worden in Javascript en Python en van dezelfde machine worden uitgevoerd, hoewel dat een uitzonderlijke situatie zal zijn.
 
 Mogelijke rollen zijn:
 
@@ -111,6 +110,8 @@ sequenceDiagram
 
     javascript_client ->> mqtt_broker: verbindt met broker en <br>publiceer huidige datum/tijd op<br>"clients/drone-game/<clientId>"
 
+    mqtt_broker --) engine: onClientsUpdate: "clients/drone-game/#35;"<br>als een (nieuwe) client verbind, voeg toe aan gamestate<br>als een clientverbinding verbreekt, verwijder itvan de gamestate
+
     loop voor elke game cycle
         mqtt_broker --) javascript_client: onGamestateUpdate: "drone-game/client/<clientId>"
         javascript_client ->> javascript_client: bereken volgende stap
@@ -127,12 +128,127 @@ sequenceDiagram
 
 ## `clients/drone-game/#`
 
+Om een client (gamer, dashboard, server, engine en bot) aan te melden bij de broker, worden de volgende topics gebruikt:
+    
 * `clients/drone-game/<IP>/<rol>/<platform>`
 * `clients/drone-game/bot`
 * `clients/drone-game/engine`
 
-Een client haalt 
+De bot en engine luisteren naar topic `clients/drone-game/#` en zien daar alle aanmeldingen of zien daar dat clients niet langer verbonden zijn ([`will`](https://www.hivemq.com/blog/mqtt-essentials-part-9-last-will-and-testament/) feature op MQTT).
 
-## `drone-game/client/<IP>/<rol>`
+Als een client verbind, publiceert het een payload (bijvoorbeeld "verbonden sinds 2025-10-31 14:04"). De engine wordt daarmee getriggerd om de client toe te voegen aan de gamestate.  
+Ook stuurt de client de last will (`will`) naar de broker met payload "disconnected".
 
-## `drone-game/client/<IP>/gamer/action`
+Als de client de verbinding verliest, bijvoorbeeld als het Python script wordt gestopt, dan wordt payload vervangen met de payload voor de `will`, zijnde "disconnected". Als de engine dit binnen krijgt, zal het de gamestate voor de client verwijderen.
+
+De informatie op deze topics wordt ook gebruikt door het dashboard om te laten zien welke clients er allemaal zijn verbonden. Het is daarom nodig dat iedere client zijn eigen topic heeft en dat de data wordt gepubliceerd met mode "retain":
+
+![verbonden cliënten](./imgs/connected%20clients.png)
+
+De payload bij verbinden zou ook uitgebreid kunnen worden met informatie over de drone. Mogelijk voorbeeld:
+
+```json
+{
+    "verbondenSinds": "2025-11-02 14:22",
+    "naam": "SpaceInvader",
+    "dronePlaatje": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAWCAYAAADXYyzPAAAABHNCSVQICAgIfAhkiAAAAL1JREFUSInllsENgzAUQ/0BtbRckJoBWIENGIVR2KxbVVwQXFCVSB/5pw20Eu8aY8fRhwAozB7aOqPpm5p5yFbwWyCiahjMI/vElNE9u4JpaJuY9jHaXRpb+FkwHa4kIUcNl4VgJ1pTf7PsIJjWb84bP3KU14rKAAAlILibpDy4mDDmI+AMbjdgvrxMwZJ6kKyc7z0OgmUldYjm+x+ND0W7sL/9EcCAjPnu0ti1jn5xou7j4MF1WNj6FucbrgVHaXoPqyYJPQAAAABJRU5ErkJggg=="
+}
+```
+
+![drone plaatje](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAWCAYAAADXYyzPAAAABHNCSVQICAgIfAhkiAAAAL1JREFUSInllsENgzAUQ/0BtbRckJoBWIENGIVR2KxbVVwQXFCVSB/5pw20Eu8aY8fRhwAozB7aOqPpm5p5yFbwWyCiahjMI/vElNE9u4JpaJuY9jHaXRpb+FkwHa4kIUcNl4VgJ1pTf7PsIJjWb84bP3KU14rKAAAlILibpDy4mDDmI+AMbjdgvrxMwZJ6kKyc7z0OgmUldYjm+x+ND0W7sL/9EcCAjPnu0ti1jn5xou7j4MF1WNj6FucbrgVHaXoPqyYJPQAAAABJRU5ErkJggg==)
+
+Kleine plaatjes kunnen worden omgezet naar base64 encoded data met tool [IT-tools - base64 file converter](https://it-tools.tech/base64-file-converter).
+
+## `drone-game/client/<IP>/<rol>/<platform>`
+
+Bij het verbinden aan de broker schrijft het in op berichten op topic `drone-game/client/<IP>/<rol>/<platform>`.  
+De engine publiceert op dit topic de volgende payload:
+
+```json
+{
+    "drone": {
+        "drone_id": "<ip>/gamer/js",
+        "positie": {
+            "x": 30,
+            "y": 35
+        },
+        "heeftBoek": false
+    },
+    "game": {
+        "dronePosities": [
+            {
+                "drone_id": "<ip>/gamer/js",
+                "positie": {
+                    "x": 41,
+                    "y": 45
+                },
+                "heeftBoek": false
+            },
+            {
+                "drone_id": "<ip>/gamer/js",
+                "positie": {
+                    "x": 30,
+                    "y": 35
+                },
+                "heeftBoek": false
+            }
+        ],
+        "boeken": [
+            {
+                "positie": {
+                    "x": 280,
+                    "y": 495
+                },
+                "heeftBodemBereikt": false
+            },
+            {
+                "positie": {
+                    "x": 280,
+                    "y": 695
+                },
+                "heeftBodemBereikt": true
+            },
+            {
+                "positie": {
+                    "x": 280,
+                    "y": 690
+                },
+                "heeftBodemBereikt": true
+            }
+        ]
+        
+    }
+}
+```
+
+De gamer client gebruikt deze informatie om te bepalen waar de stapel boeken is en het zijn boek moet loslaten. Maar ook waar de andere drones zijn die het moet ontwijken.
+
+Het dashboard gebruikt de informatie in `game` om de drones en boeken te tekenen op het speelveld en de "score" te bepalen. Ofwel hoeveel boeken er op de stapel liggen.
+
+## `drone-game/client/<IP>/<rol>/<platform>/action`
+
+Als de drone de informatie over de andere drones en de stapel boeken heeft verwerkt, zal het een actie publiceren dat door de engine wordt verwerkt. Dit gebeurt op topic `drone-game/client/<IP>/<rol>/<platform>/action`.
+
+De payload ziet er als volgt uit:
+
+```json
+{
+    "richting": "hangen",
+    "actie": "pakBoek"
+}
+```
+`richting` is één optie uit:
+
+1. `hangen`: drone hangt stil
+2. `stijgen`: drone stijgt 1 stap ophoog
+3. `dalen`: drone daalt 1 stap omlaag
+4. `links`: drone beweegt 1 stap naar links
+5. `rechts`: drone beweegt 1 stap naar rechts
+
+`actie` is één uit:
+
+1. `pakBoek`: pak het boek uit de bibliotheek
+2. `laatBoekVallen`: laat het boek vallen als de drone boven de stapel hangt
+3. `geen`: als er geen actie is en de drone alleen beweegt
+
+De game engine verwerkt de acties van alle drones in de gamestate een publiceert het resultaat op de verschillende topics.
