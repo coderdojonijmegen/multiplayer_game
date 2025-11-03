@@ -1,0 +1,5 @@
+function droneImage() {
+    return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAWCAYAAADXYyzPAAAABHNCSVQICAgIfAhkiAAAAL1JREFUSInllsENgzAUQ/0BtbRckJoBWIENGIVR2KxbVVwQXFCVSB/5pw20Eu8aY8fRhwAozB7aOqPpm5p5yFbwWyCiahjMI/vElNE9u4JpaJuY9jHaXRpb+FkwHa4kIUcNl4VgJ1pTf7PsIJjWb84bP3KU14rKAAAlILibpDy4mDDmI+AMbjdgvrxMwZJ6kKyc7z0OgmUldYjm+x+ND0W7sL/9EcCAjPnu0ti1jn5xou7j4MF1WNj6FucbrgVHaXoPqyYJPQAAAABJRU5ErkJggg==";
+}
+
+export {droneImage}

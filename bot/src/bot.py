@@ -46,17 +46,16 @@ def publish_state(mqtt: MqttApp):
             "game": {
                 "drone_positions": [d.as_dict() for d in drones],
                 "books": [b.as_dict() for b in books],
-                "bookShelfX": book_shelf_x
             },
         }))
 
 
 def stijgen(drone: Drone):
-    drone.position.y -= 1
+    drone.position.y += 1
 
 
 def dalen(drone: Drone):
-    drone.position.y += 1
+    drone.position.y -= 1
 
 
 def naar_links(drone: Drone):
@@ -67,16 +66,30 @@ def naar_rechts(drone: Drone):
     drone.position.x += 1
 
 
-def stil_hangen(drone: Drone):
+def nop(drone: Drone):
     pass
 
 
 direction = {
-    "S": stijgen,
-    "D": dalen,
-    "L": naar_links,
-    "R": naar_rechts,
-    "H": stil_hangen,
+    "stijgen": stijgen,
+    "dalen": dalen,
+    "links": naar_links,
+    "rechts": naar_rechts,
+    "hangen": nop,
+}
+
+def release_book(drone: Drone):
+    books.append(Book(Position(drone.position.x * 20, drone.position.y * 20)))
+    drone.has_book = False
+    logger.info(f"added book: {books[-1]}")
+
+def fetch_book(drone: Drone):
+    drone.has_book = True
+
+actions = {
+    "laatboekvallen": release_book,
+    "pakboek": fetch_book,
+    "geen": nop
 }
 
 
@@ -97,11 +110,8 @@ def on_drone_message(topic, message):
         if matched_drones := [d for d in drones if d.drone_id == drone_id]:
             drone = matched_drones[0]
             action = loads(message)
-            direction[action["direction"].upper()](drone)
-            drone.has_book = action["hasBook"] if "hasBook" in action else False
-            if "releasedBook" in action and action["releasedBook"]:
-                books.append(Book(Position(drone.position.x * 20, drone.position.y * 20)))
-                logger.info(f"added book: {books[-1]}")
+            direction[action["richting"].lower()](drone)
+            actions[action["actie"].lower()](drone)
 
     if topic.startswith("drone-game/client/") and topic.endswith("/config"):
         drone_id = topic.replace("drone-game/client/", "").replace("/config", "")
@@ -119,4 +129,5 @@ if __name__ == '__main__':
         (f"clients/drone-game/#", 0),
         (f"drone-game/client/#", 0)
     ]
+    reset_books()
     mqtt_app.start()

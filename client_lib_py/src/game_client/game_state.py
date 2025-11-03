@@ -27,12 +27,11 @@ class Drone:
 @dataclass
 class Action:
     direction: str
-    has_book: bool = False
+    fetch_book: bool = False
     released_book: bool = False
 
     def as_dict(self):
         return {
-            "direction": self.direction,
-            "hasBook": self.has_book,
-            "releasedBook": self.released_book
+            "richting": self.direction,
+            "actie": "laatBoekVallen" if self.released_book else "pakBoek" if self.fetch_book else "geen"
         }
