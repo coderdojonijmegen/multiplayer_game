@@ -66,20 +66,22 @@ executable multiplayer-game
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
-
+    other-modules:    DroneGame
+    
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
     build-depends:    network-uri ^>=2.6.4.2
                     , base >= 4.6 && < 4.19
-
+                    , bytestring
                     , aeson
                     , scotty
                     , time
                     , text
                     , net-mqtt
+                    , array
+                    , containers
     
 
     -- Directories containing source files.
