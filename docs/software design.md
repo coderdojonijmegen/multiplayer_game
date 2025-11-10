@@ -5,13 +5,13 @@
 - we gebruiken een centrale server met een domeinnaam: drone-game.coderdojo-nijmegen.nl
     - doordat we een centrale server gebruiken, hoeven we geen discovery mechanismen te implementeren (één van de functionaliteiten van Network Zero)
 - we gebruiken MQTT voor de communicatie
-    - want beschikbaar in de browser (Javascript) en in Python
+    - want beschikbaar in de browser (Javascript), Haskell en in Python
     - want bi-directioneel, waardoor de client event-driven kan zijn en geen polling mechanisme hoeft te implementeren
     - overweging MQTT:
         - handig subscriben op topics (bijvoorbeeld game state)
         - kan eenvoudig event-driven worden gebruikt voor ontvangen van informatie
         - extra container, naast gameserver container
-        - adresseren clients via topicnaam of message body?
+        - adresseren clients via topicnaam of message body? Aanname topicnaam.
 
 ### Architectuur
 
@@ -27,27 +27,31 @@ architecture-beta
     service server(server)[web server] in game
     service engine(server)[Game Engine] in game
 
-    engine:R -- L:broker
-    server:T -- L:broker
+    junction http in game
+    junction httpl in laptop
+    junction mqtt in game
 
-    browser:T -- L:broker
-    client:T -- L:broker
+    engine:L -- R:mqtt
+    server:T -- B:mqtt
+    mqtt:L -- R:broker
+
+    browser:T -- B:httpl
+    client:B -- T:httpl
+    httpl:R -- T:server
 
 ```
 
-De Ninja speelt het spel op haar/zijn laptop. Dat kan met een Python script in Thonny, maar ook in Visual Studio Code met Javascript wat in de browser wordt uitgevoegd.
+De Ninja speelt het spel op haar/zijn laptop. Dat kan met een Python script in Thonny, maar ook in Visual Studio Code met Javascript wat in de browser wordt uitgevoerd of zelfs met de editor in de game client webpagina.
 
-- Python client: 
-- Browser client: 
-- MQTT broker: berichten schakelpunt waar verschillende blokken in het systeem 
-- Game engine: ontvangt berichten van de clients via het schakelpunt en verwerkt de informatie in de game state
-- web server: serveert een dashboard dat een overzicht toont van de bibliotheken, boekentorens en vliegende drones, biedt ook een paar endpoints om een nieuwe client aan te melden bij de game engine
+- Python client: luistert naar topics op de broker en publiceert nieuwe acties gebaseerd op de ontvangen informatie van de broker
+- Browser client: luistert naar topics op de broker en publiceert nieuwe acties gebaseerd op de ontvangen informatie van de broker; toont ook het speelveld met de eigen drone van de speler en die van de anderen
+- MQTT broker: berichten schakelpunt waar verschillende blokken in het systeem samenkomen
+- Game engine: ontvangt berichten van de clients via het schakelpunt, verwerkt de informatie in de game state en publiceert de resultaten
+- web server: serveert een dashboard dat een speelveld toont van de bibliotheken, boekentorens en vliegende drones, biedt ook een paar endpoints om een nieuwe client aan te melden bij de game engine
 
 ## Clients
 
-De clients hebben verschillende rollen en geven die ook mee aan de server voor het bepalen van het client ID. Dit maakt het mogelijk om zowel een dashboard als gamer rol
-op één machine te laten werken. Het clientId voor het verbinden aan de MQTT broker moet uniek zijn, dus met enkel het IP adres als clientId gebruiken zou het dan niet mogelijk
-zijn om zowel een dashboard als gamer vanaf één machine te draaien. De gamer kan vervolgens nog geïmplementeerd worden in Javascript en Python en van dezelfde machine worden uitgevoerd, hoewel dat een uitzonderlijke situatie zal zijn.
+De clients hebben verschillende rollen en geven die ook mee aan de server voor het bepalen van het client ID. Dit maakt het mogelijk om zowel een dashboard als gamer rol op één machine te laten werken. Het clientId voor het verbinden aan de MQTT broker moet uniek zijn, dus met enkel het IP adres als clientId gebruiken zou het dan niet mogelijk zijn om zowel een dashboard als gamer vanaf één machine te draaien. De gamer kan tenslotte nog geïmplementeerd worden in Javascript én Python en van dezelfde machine worden uitgevoerd, hoewel dat een uitzonderlijke situatie zal zijn.
 
 Mogelijke rollen zijn:
 
@@ -59,9 +63,9 @@ De mogelijke clientId's worden dan:
 
 - `<IP>/gamer/py`: gamer geïmplementeerd in Python
 - `<IP>/gamer/js`: gamer geïmplementeerd in Javascript
-- `<IP>/dashboard/js`: dashboard geïmplementeerd in Javascript, tevens enige implmentatie
+- `<IP>/dashboard/js`: dashboard geïmplementeerd in Javascript, toont speelveld en de andere verbonden clients
 - `engine`: game engine
-- `bot`: bot die eventueel ingezet wordt om de drones te laten bewegen; handig bij het testen van de playground
+- `bot`: bot die eventueel ingezet wordt om de drones te laten bewegen; handig bij het testen van het speelveld
 
 ### Javascript
 

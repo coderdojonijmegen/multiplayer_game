@@ -23,9 +23,9 @@ def reset_books():
     global books
     global book_shelf_x
     books.clear()
-    book_shelf_x = Random().randint(10, 60)
+    book_shelf_x = Random().randint(1, 70)
     books = [
-        Book(Position(book_shelf_x * 10, 697), True)
+        Book(Position(book_shelf_x * 20, 700), True)
     ]
 
 
@@ -79,7 +79,7 @@ direction = {
 }
 
 def release_book(drone: Drone):
-    books.append(Book(Position(drone.position.x * 20, drone.position.y * 20)))
+    books.append(Book(Position(drone.position.x * 20, drone.position.y * 20 + 13)))
     drone.has_book = False
     logger.info(f"added book: {books[-1]}")
 

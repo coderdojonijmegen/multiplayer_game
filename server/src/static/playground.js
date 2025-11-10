@@ -110,9 +110,12 @@ class PlayGround {
                         .withDroneImage(img);
                     this.drones.push(dr);
                 }
-                dr.withBook(drone.hasBook)
-                    .position(drone.position)
-                    .draw();
+                if (dr.droneId.includes("gamer")) {
+                    console.log(dr.droneId);
+                    dr.withBook(drone.hasBook)
+                        .position(drone.position)
+                        .draw();
+                }
             }
 
             if (game.books) {
@@ -124,9 +127,9 @@ class PlayGround {
                 }
 
                 // book count
-                if (booksAtBottom.length > 0) {
+                if (booksAtBottom.length > 1) {
                     this.ctx.font = "11px sans-serif";
-                    this.ctx.fillText(`${booksAtBottom.length} books`, books[0].position.x + 25, 700 - 5);
+                    this.ctx.fillText(`${booksAtBottom.length - 1} books`, books[0].position.x + 25, 700 - 5);
                 }
             }
         }
