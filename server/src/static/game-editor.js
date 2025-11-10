@@ -1,34 +1,41 @@
 import {PlayGround} from "/static/playground.js";
 
-const CODE_EXAMPLE = `let xDir = 1;
+const CODE_EXAMPLE = `
+let richting = "rechts";
 this.onStatusUpdate = (status) => {
     this.#log(\`x=\${status.drone.position.x} y=\${status.drone.position.y}\`);
+
     let hasBook = status.drone.hasBook;
-    let bookShelfX = status.game.bookShelfX;
-    let releasedBook = false;
+    let bookShelfX = Math.round(status.game.books[0].position.x / 20);
+    let action = "geen";
+
+
     if (status.drone.position.x <= 0) {
-        xDir = 1;
-        hasBook = true;
-    } else if (status.drone.position.x >= 65) {
-        xDir = -1;
-        hasBook = false;
+        richting = "rechts";
+    } else if (status.drone.position.x > 79) {
+        richting = "links";
+    } else if (status.drone.position.y <= 0) {
+        richting = "dalen";
+    } else if (status.drone.position.y >= 35) {
+        richting = "stijgen";
     }
-    let x = status.drone.position.x;
-    let y = status.drone.position.y;
-    if (hasBook && status.drone.position.x == bookShelfX) {
-        releasedBook = true;
-        hasBook = false;
-    } else {
-         x += xDir;
-         y = Math.round(Math.sin(status.drone.position.x*2/3) * 3 + 10)
+
+    if (status.drone.position.x === 0 && !hasBook) {
+        action = "pakBoek";
     }
+
+    if (status.drone.position.x === bookShelfX) {
+        if (hasBook) {
+            richting = "hangen";
+            action = "laatBoekVallen";
+        } else {
+            richting = "links";
+        }
+    }
+
     this.#sendAction({
-        "position": {
-            "x": x,
-            "y": y
-        },
-        "hasBook": hasBook,
-         "releasedBook": releasedBook
+        "richting": richting,
+        "actie": action
     });
 }
 `;
